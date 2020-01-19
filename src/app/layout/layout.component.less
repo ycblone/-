@@ -1,0 +1,72 @@
+.header {
+  background-color: #166cdb;
+  background-image: url(/assets/images/banner.png);
+  background-size: auto 100%;
+  background-position-x: 100%;
+  background-repeat: no-repeat;
+  padding: 0px;
+
+  .logo-image {
+    width: 116px;
+    height: 64px;
+    background-image: url(/assets/images/logo.png);
+    background-size: 75%;
+    float: left;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #001529;
+  }
+
+  .logo-text {
+    color: white;
+    display: table-cell;
+    padding-left: 22px;
+    font-size: 1.7em;
+    font-weight: bold;
+  }
+
+  .top-right-btn-container {
+    color: white;
+    float: right;
+    margin-right: 24px;
+
+    button {
+      color: white;
+      &:hover {
+        color: #92c1df;
+      }
+    }
+  }
+}
+
+.menu-content {
+  background: rgb(75, 78, 95);
+}
+
+li[nz-menu-item] {
+  padding-left: 24px;
+  height: auto;
+  line-height: normal;
+  margin: 0 !important;
+  text-align: center;
+  padding: 12px 0 !important;
+  border-top: 1px solid #001529;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.inner-layout {
+  background-color: rgb(236,243,250);
+  .content-box {
+    height: calc( 100vh - 64px );
+    padding-left: 20px;
+    overflow: auto;
+
+    & > div {
+      height: 100%;
+      min-width: calc(1600px - 136px);
+    }
+  }
+}

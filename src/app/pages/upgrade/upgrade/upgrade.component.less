@@ -1,0 +1,226 @@
+:host {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px 20px 0;
+}
+//nz-spin {
+//  width: 100%;
+//  height: 100%;
+//}
+.input-row {
+  margin-bottom: 20px;
+  padding: 16px 20px 20px 20px;;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+  ::ng-deep nz-select.red-input {
+    & > div {
+      border-color: red;
+    }
+    &.ant-select-open > div {
+      box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+    }
+  }
+
+  input.red-input {
+    border-color: red;
+    &:focus {
+      box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+    }
+  }
+  .input-row-header {
+    line-height: 36px;
+    font-weight: bold;
+
+    .input-row-header-title {
+      float: left;
+      font-weight: bold;
+      color: #166cdb;
+      font-size: 24px;
+      padding-left: 3px;
+    }
+    .input-row-top-right {
+      float: right;
+      nz-select {
+        width: 128px;
+      }
+      span~span {
+        margin-left: 30px;
+      }
+      nz-select {
+        font-weight: normal;
+      }
+    }
+  }
+
+  .input-row-content {
+    margin-top: 16px;
+    background: #f6f7fa;
+    padding: 20px 24px;
+    border-radius: 5px;
+
+    .content-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #ababab;
+    }
+
+    .left-content {
+      float: left;
+      width: 100%;
+      position: relative;
+
+      .input-box {
+        float: left;
+        width: calc((100% - 121px)/6);
+        padding-right: 20px;
+        .select{
+          display: block;
+        }
+      }
+      .upFiles{
+        display: block;
+      }
+      .confirm-box{
+        float: left;
+        width: 121px;
+
+        button {
+          width: 100%;
+        }
+      }
+
+    }
+
+    .input-label {
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 5px;
+
+      &.label-required {
+        margin-left: .8em;
+      }
+    }
+    .content-input {
+      margin-top: 14px;
+    }
+  }
+
+}
+.doubleBlock{
+  height: calc(100% - 250px);
+  .leftBasic,.rightUpdate{
+    overflow: auto;
+    width: calc(50% - 10px);
+    vertical-align: top;
+    display: inline-block;
+    height: 100%;
+    background: white;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    border-radius: 5px;
+    padding: 20px 20px 20px 20px;
+    .result-table-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #757575;
+      margin-bottom: 24px;
+
+
+      & > span {
+        vertical-align: middle;
+      }
+
+      .result-table-title-icon {
+        display: inline-block;
+        background: #166cdb;
+        border-radius: 5px;
+        width: 28px;
+        height: 28px;
+        padding: 1px;
+        margin-right: .6em;
+      }
+    }
+    .bigFont{
+      .ng-star-inserted{
+        line-height: 22px!important;
+      }
+      span{
+        font-size: 18px;
+      }
+    }
+    nz-alert{
+      width: 90%;
+      background-color: rgba(22,108,219,0.12);
+      border-color: rgba(22,108,219,0.12);
+      margin: 0 auto;
+    }
+    .waitUpdate,.processIcon,.successIcon{
+      margin-right: 6px;
+    }
+    .waitUpdate{
+      color: #ffe58f;
+    }
+    .processIcon{
+      color: #1890ff;
+    }
+    .successIcon{
+      color: rgba(61,204,166,0.12);
+    }
+
+    .statusFont{
+      font-weight: bold;
+    }
+    .sessionTable{
+      height: 61%;
+    }
+    .sessionTableRight{
+      height: 120px;
+
+    }
+    .tableAddImg{
+      position: relative;
+    }
+    .sessionTable,.sessionTableRight{
+      width: 70%;
+      margin: 3% auto;
+      border: 2px solid #ecf3fa;
+      tr{
+        td{
+          background-color: #f6f7fa;
+          border-bottom: 2px solid white;
+          text-align: right;
+          width: 160px;
+          padding-right: 15px;
+          font-size: 18px;
+          color: #000000;
+        }
+        th{
+          border-bottom: 2px solid #f6f7fa;
+          background-color: #ffffff;
+          font-size: 18px;
+          color: #000000;
+          padding-left: 20px;
+        }
+      }
+    }
+    .nullImgWrap{
+      width: 42%;
+      margin: 0 auto;
+      height: calc(100% - 102px);
+      display: flex;
+      align-items: center;
+      .nullImg{
+        width: 100%;
+      }
+    }
+  }
+  .rightUpdate{
+    margin-left: 20px;
+    .checkedImg{
+      position: absolute;
+      bottom: -80px;
+      right: 25px;
+    }
+  }
+}

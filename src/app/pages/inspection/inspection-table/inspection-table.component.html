@@ -1,0 +1,119 @@
+
+<div *ngIf="manualInspectionList.length > 0">
+  <div class="result-table-title">
+    <span class="result-table-title-icon">
+      <app-svg href="/assets/images/手动.svg#m" [fill]="'white'" [fontSize]="'24px'"></app-svg>
+    </span>
+    <span>人工检测</span>
+  </div>
+  <nz-table class="result-table" #manualTable [nzData]="manualInspectionList" [nzFrontPagination]="false" nzSize="middle" [nzBordered]="true" [nzLoading]="loading">
+    <thead>
+      <tr>
+        <th nzWidth="70px">序号</th>
+        <th>功能</th>
+        <th>内容</th>
+        <ng-container [ngSwitch]="useSingleManualInspection">
+          <th *ngSwitchCase="true" nzWidth="120px">
+            操作
+          </th >
+          <th *ngSwitchDefault nzWidth="120px">
+            状态
+          </th>
+        </ng-container>
+        <th nzWidth="180px">检测结果</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of manualTable.data" [ngClass]="{'row-in-inspection': item.status === 1}" [id]="'manual_' + item.index">
+        <td>{{item.index}}</td>
+        <td>{{item.businessTypeStr}}</td>
+        <td [innerHtml]="item.instructions"></td>
+        <ng-container [ngSwitch]="useSingleManualInspection">
+          <td *ngSwitchCase="true">
+            <ng-container [ngSwitch]="item.needCommand">
+              <ng-container *ngSwitchCase="1">
+                <button nz-button nzType="primary" nzSize="small" [disabled]="!canSingleManualOperaBtnClick(item)" (click)="doSingleManualInspection(item)">
+                  <ng-container [ngSwitch]="item.status">
+                    <ng-container *ngSwitchCase="1">进行中<span class="dot">...</span></ng-container>
+                    <ng-container *ngSwitchDefault>ping</ng-container>
+                  </ng-container>
+                </button>
+              </ng-container>
+              <ng-container *ngSwitchCase="0">--</ng-container>
+            </ng-container>
+          </td>
+          <td *ngSwitchDefault>
+            <ng-container [ngSwitch]="item.needCommand === 0 ? 3 : item.status">
+              <ng-container *ngSwitchCase="0">未开始</ng-container>
+              <ng-container *ngSwitchCase="1">进行中<span class="dot">...</span></ng-container>
+              <ng-container *ngSwitchCase="2">已完成</ng-container>
+              <ng-container *ngSwitchDefault>--</ng-container>
+            </ng-container>
+          </td>
+        </ng-container>
+        <td class="result-cell">
+          <span class="success-color" [class.result-unhit]="item.result !== 1" (click)="recordManualResult(item, true)">正常</span>
+          <app-triple-switch [status]="getTripleSwitchFromResult(item.result)"></app-triple-switch>
+          <span class="fail-color" [class.result-unhit]="item.result !== 0" (click)="recordManualResult(item, false)">异常</span>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<div *ngIf="autoInspectionList.length > 0">
+  <div class="result-table-title">
+    <span class="result-table-title-icon">
+      <app-svg href="/assets/images/自动.svg#m" [fill]="'white'" [fontSize]="'24px'"></app-svg>
+    </span>
+    <span>自动检测</span>
+  </div>
+  <nz-table class="result-table" #autoTable [nzData]="autoInspectionList" [nzFrontPagination]="false" nzSize="middle" [nzBordered]="true" [nzLoading]="loading">
+    <thead>
+      <tr>
+        <th nzWidth="70px">序号</th>
+        <th>功能</th>
+        <th>内容</th>
+        <th nzWidth="120px">状态</th>
+        <th nzWidth="180px">检测结果</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of autoTable.data" [ngClass]="{'row-in-inspection': item.status === 1}" [id]="'auto_' + item.index">
+        <td>{{item.index}}</td>
+        <td>{{item.businessTypeStr}}</td>
+        <td [innerHtml]="item.instructions"></td>
+        <td>
+          <ng-container [ngSwitch]="item.status">
+            <ng-container *ngSwitchCase="0">未开始</ng-container>
+            <ng-container *ngSwitchCase="1">进行中<span class="dot">...</span></ng-container>
+            <ng-container *ngSwitchCase="2">已完成</ng-container>
+            <ng-container *ngSwitchDefault>--</ng-container>
+          </ng-container>
+        </td>
+        <td class="result-cell">
+          <ng-container [ngSwitch]="item.result">
+            <ng-container *ngSwitchCase="0"><span class="fail-color">异常</span></ng-container>
+            <ng-container *ngSwitchCase="1"><span class="success-color">正常</span></ng-container>
+            <ng-container *ngSwitchDefault>-</ng-container>
+          </ng-container>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<nz-modal [(nzVisible)]="abnormalModalVisible" [nzTitle]="modalTitle" [nzFooter]="modalFooter" (nzOnCancel)="closeAbnormalModal()" nzWidth="620px" class="abnormal-modal">
+  <ng-template #modalTitle>
+    <span class="main-title">异常状态</span><span class="secondary-title">（{{abnormalItem.businessTypeStr}}）</span>
+  </ng-template>
+  <ng-template #modalFooter>
+    <button nz-button nzType="default" (click)="closeAbnormalModal()">取消</button>
+    <button nz-button nzType="primary" (click)="setAbnormal()" [disabled]="!hasSelectAnyAbnormalItem()" [nzLoading]="loading">确定</button>
+  </ng-template>
+  <div class="clearfix">
+    <div class="modal-checkbox" *ngFor="let item of abnormalList">
+      <label nz-checkbox [(ngModel)]="item.selected">{{item.value}}</label>
+    </div>
+  </div>
+</nz-modal>

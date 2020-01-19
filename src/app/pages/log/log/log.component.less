@@ -1,0 +1,43 @@
+:host {
+  display: block;
+  height: 100%;
+  padding: 20px 20px 20px 0;
+}
+
+.log-panel {
+  height: 100%;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+  padding: 16px 20px;
+
+  .log-title {
+    font-weight: bold;
+    color: #166cdb;
+    font-size: 24px;
+    padding-left: 3px;
+  }
+
+  .log-table-operate {
+    margin-top: 16px;
+    text-align: right;
+
+    .operate-item {
+      margin-left: 0.5em;
+      display: inline-block;
+      line-height: 32px;
+    }
+  }
+
+  .log-table {
+    margin-top: 10px;
+    ::ng-deep {
+      tr th {
+        font-weight: bold;
+      }
+      tr td {
+        word-break: break-all;
+      }
+    }
+  }
+}

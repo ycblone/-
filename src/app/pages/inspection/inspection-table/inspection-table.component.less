@@ -1,0 +1,140 @@
+@fail-color: rgb(255,76,76);
+@success-color: rgb(61,204,166);
+@undo-color: rgb(163,177,191);
+
+.fail-color {
+  color: @fail-color;
+}
+
+.success-color {
+  color: @success-color;
+}
+
+.undo-color {
+  color: @undo-color;
+}
+
+.result-unhit {
+  opacity: 0.3;
+  cursor: pointer;
+}
+
+.result-table-title {
+  font-size: 18px;
+  margin: 12px 1px;
+  font-weight: bold;
+  color: #888;
+
+  & > span {
+    vertical-align: middle;
+  }
+
+  .result-table-title-icon {
+    display: inline-block;
+    background: #166cdb;
+    border-radius: 5px;
+    width: 26px;
+    height: 26px;
+    padding: 1px;
+    margin-right: .6em;
+  }
+}
+
+.result-table ::ng-deep {
+  thead th {
+    background: rgb(242,243,248);
+    font-weight: bold;
+    text-align: center;
+    padding: 7px 8px !important;
+  }
+  tbody tr {
+    background: white;
+    text-align: center;
+    td {
+      padding: 7px 8px !important;
+    }
+
+    &:hover td {
+      background-color: inherit;
+    }
+    td:hover {
+      background-color: inherit;
+    }
+
+    &.row-in-inspection {
+      background-color: #9ecadf;
+
+      &:hover td {
+        background-color: #9ecadf;
+      }
+    }
+
+    .result-cell span {
+      font-weight: bold;
+    }
+    .result-cell > app-triple-switch {
+      font-size: 1.4em;
+      vertical-align: middle;
+      margin-left: .4em;
+      margin-right: .4em;
+      ::ng-deep button {
+        cursor: default;
+      }
+    }
+    .result-cell > span {
+      vertical-align: middle;
+      user-select: none;
+    }
+  }
+}
+
+::ng-deep .abnormal-modal {
+  .ant-modal-body {
+    padding: 20px 24px;
+  }
+  .main-title {
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+  .secondary-title {
+    font-size: .9em;
+    color: #aaa;
+  }
+  .modal-checkbox {
+    float: left;
+    width: 33.33%;
+    line-height: 35px;
+    background: rgb(246,247,250);
+    margin: 4px 0;
+    padding: 0 6px;
+
+    label {
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+
+    &:nth-child(3n), &:last-child {
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+    &:nth-child(3n + 1) {
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+    }
+  }
+}
+
+::ng-deep .abnormal-confirm-modal {
+  .ant-btn-default {
+    color: white;
+    background-color: @fail-color;
+    border-color: @fail-color;
+  }
+  .ant-btn-primary {
+    background-color: @success-color;
+    border-color: @success-color;
+  }
+}

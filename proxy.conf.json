@@ -1,0 +1,14 @@
+{
+  "/**": {
+    "target":  "http://www.qitianoffer.club",
+    "secure": false,
+    "changeOrigin": "true"
+  },
+  "/update": {
+    "target":  "http://10.31.109.11:8080/update",
+    "secure": false,
+    "changeOrigin": "true",
+    "pathRewrite": {"^/update": ""}
+  }
+}
+

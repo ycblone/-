@@ -1,0 +1,168 @@
+<!--复用pon网关的模板-->
+<div style="height: 100%;">
+    <div class="input-row clearfix">
+      <div class="input-row-header clearfix">
+        <div class="input-row-header-title">
+          软件升级
+        </div>
+        <div class="input-row-top-right">
+      <span class="label-required">运营商<i nz-icon nzType="info-circle" nzTheme="outline" style="padding: 0 3px; font-size: .8em;"></i>:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="selectedOperator" (ngModelChange)="inputSn()" [class.red-input]="!selectedOperator">
+          <nz-option [nzValue]="1" nzLabel="联通"></nz-option>
+          <nz-option [nzValue]="2" nzLabel="移动"></nz-option>
+          <nz-option [nzValue]="3" nzLabel="电信"></nz-option>
+        </nz-select>
+      </span>
+          <span class="label-required">省份:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="selectedProvince" [nzLoading]="provinceList.length === 0" (ngModelChange)="inputSn()" [class.red-input]="!selectedProvince">
+          <nz-option *ngFor="let p of provinceList" [nzValue]="p.key" [nzLabel]="p.desc"></nz-option>
+        </nz-select>
+      </span>
+        </div>
+      </div>
+      <div class="input-row-content clearfix">
+        <div class="left-content">
+          <div class="content-title">请输入待升级设备信息：</div>
+          <div class="content-input clearfix">
+            <div class="input-box">
+              <span class="input-label label-required">SN:</span>
+              <input nz-input [(ngModel)]="sn" class="input-item" [placeholder]="'自动识别'" (blur)="inputSn()"
+                     (keyup.enter)="inputSn()" [class.red-input]="!sn" #snInput/>
+            </div>
+            <div class="input-box">
+              <span class="input-label label-required">设备型号:</span>
+              <input nz-input [(ngModel)]="deviceNum" [placeholder]="'自动识别'" class="input-item"/>
+            </div>
+            <div class="input-box">
+              <span class="input-label label-required">物料号:</span>
+              <input nz-input [(ngModel)]="materialsNum" [placeholder]="'自动识别'" class="input-item"/>
+            </div>
+            <div class="input-box">
+              <span class="input-label label-required">设备IP:</span>
+              <input nz-input [(ngModel)]="ip" [placeholder]="'自动识别'" class="input-item"/>
+            </div>
+            <div class="confirm-box">
+              <span class="input-label">&nbsp;</span>
+              <nz-spin [nzSpinning]="isSpinning">
+              <button nz-button (click)="checking()" [disabled]="upLoadStatus">一键升级</button>
+              </nz-spin>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="doubleBlock">
+        <div class="leftBasic">
+        <div class="result-table-title">
+      <span class="result-table-title-icon">
+        <app-svg href="/assets/images/basic.svg#m" [fill]="'white'" [fontSize]="'26px'"></app-svg>
+      </span>
+          <span>基础信息</span>
+        </div>
+        <div *ngIf="basicSessionLength">
+          <nz-alert
+            [nzType]="basicStatus?'success':'info'"
+            [nzMessage]="messageL"
+            nzShowIcon
+          >
+          </nz-alert>
+          <ng-template #messageL>
+      <span>
+        <span class="statusFont">状态：</span>
+        {{basicStatus?'信息读取完成':'信息读取中...'}}
+      </span>
+          </ng-template>
+          <table class="sessionTable">
+            <tr>
+              <td>产品型号</td>
+              <th>{{basicSession.typeNum}}</th>
+            </tr>
+            <tr>
+              <td>Mac地址</td>
+              <th>{{basicSession.macIp}}</th>
+            </tr>
+            <tr>
+              <td>硬件版本</td>
+              <th>{{basicSession.hardWareType}}</th>
+            </tr>
+            <tr>
+              <td>软件版本</td>
+              <th>{{basicSession.softWareType}}</th>
+            </tr>
+            <tr>
+              <td>编译时间</td>
+              <th>{{basicSession.buildTime}}</th>
+            </tr>
+
+          </table>
+          <div class="input-box" style="margin-left: 44.8px;position: relative;">
+            <span class="input-label label-required">开始升级:</span>
+            <nz-upload nzAction="update/upgrade" [(nzFileList)]="fileList"
+                       [nzData]="upParams()" (nzChange)="upLoadChange($event)" [nzDisabled]="upLoadStatus"
+                       style="margin-left: 30px"
+            >
+              <button nz-button nzType="primary">
+                <i nz-icon nzType="upload" *ngIf="!upLoadText"></i>
+                <span>{{upLoadText?upLoadText:'开始升级'}}</span>
+                <!--<i nz-icon nzType="arrow-right" nzTheme="outline" style="color: white" *ngIf="!upLoadText"></i>-->
+              </button>
+            </nz-upload>
+          </div>
+        </div>
+          <div class="nullImgWrap" *ngIf="!basicSessionLength">
+          <img src="../../../../assets/images/nullImg.png" alt="" class="nullImg"/>
+        </div>
+        </div>
+
+<div class="rightUpdate">
+        <div class="result-table-title">
+      <span class="result-table-title-icon">
+        <app-svg href="/assets/images/updateSession.svg#m" [fill]="'white'" [fontSize]="'26px'"></app-svg>
+      </span>
+          <span>升级信息</span>
+        </div>
+        <div *ngIf="basicSessionLength" [ngClass]="updateStatus==1?'bigFont':''">
+          <nz-alert
+            [nzType]="updateStatus==0?'warning':updateStatus==1?'info':updateStatus==2?'success':'error'"
+            [nzMessage]="messageR"
+            nzShowIcon
+            *ngIf="updateStatus!=-1"
+          >
+          </nz-alert>
+          <ng-template #messageR>
+      <span>
+        <!--<i nz-icon nzType="minus-circle" nzTheme="fill" class="waitUpdate" *ngIf="!updateStatus"></i>-->
+        <span class="statusFont">状态：</span>
+        {{updateStatus==0?'待升级':updateStatus==1?'升级中，请勿断电':updateStatus==2?'升级成功':'升级失败,版本未发生变化'}}
+      </span>
+          </ng-template>
+          <nz-spin [nzSpinning]="isSpinningTable">
+            <div class="tableAddImg">
+              <table class="sessionTableRight">
+                <tr>
+                  <td>软件版本</td>
+                  <th>{{upSuccess.softType?upSuccess.softType:updateStatus>1?basicSession.softWareType:''}}</th>
+                </tr>
+                <tr>
+                  <td>编译时间</td>
+                  <th>{{upSuccess.buildT?upSuccess.buildT:updateStatus>1?basicSession.softWareType:''}}</th>
+                </tr>
+              </table>
+              <img src="/assets/images/checked.png" alt="" class="checkedImg" *ngIf="isParam && updateStatus==2"/>
+            </div>
+          </nz-spin>
+        </div>
+
+
+        <div class="nullImgWrap" *ngIf="!basicSessionLength">
+          <img src="../../../../assets/images/nullImg.png" alt="" class="nullImg"/>
+        </div>
+      </div>
+    </div>
+
+</div>
+<app-new-sn-input #newSnInput deviceType="PON_GATEWAY"></app-new-sn-input>
+
+
+

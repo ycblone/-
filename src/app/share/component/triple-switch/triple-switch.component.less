@@ -1,0 +1,56 @@
+@content_height: .9em;
+@content_width: 2.1em;
+
+:host {
+  display: inline-block;
+  overflow: hidden;
+}
+
+.triple-switch {
+  width: @content_width;
+  height: @content_height;
+  color: white;
+  padding: .12em;
+  border-radius: @content_height;
+  position: relative;
+  display: block;
+  border: none;
+  box-sizing: content-box;
+  cursor: pointer;
+  transition: all .36s;
+}
+.triple-switch:focus {
+  outline: 0;
+  box-shadow: 0 0 0 .06em rgba(24,144,255,.2)
+}
+.triple-switch-ball {
+  position: absolute;
+  width: @content_height;
+  height: @content_height;
+  top: .12em;
+  border-radius: @content_height;
+  background: white;
+  box-shadow: 0 2px 4px 0 rgba(0,35,11,.2);
+  transition: all .36s cubic-bezier(.78,.14,.15,.86);
+}
+
+.triple-switch-status-middle {
+  background: rgb(163,177,191);
+}
+.triple-switch-status-middle .triple-switch-ball{
+  left: calc(.12em + @content_width / 2 - @content_height / 2);
+}
+
+.triple-switch-status-left {
+  background: rgb(102,214,190);
+}
+.triple-switch-status-left .triple-switch-ball{
+  left: .12em;
+}
+
+.triple-switch-status-right {
+  background: rgb(255,111,121);
+}
+.triple-switch-status-right .triple-switch-ball{
+  left: calc(.12em + @content_width - @content_height);
+}

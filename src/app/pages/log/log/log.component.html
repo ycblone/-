@@ -1,0 +1,88 @@
+<div class="log-panel">
+  <div class="log-title">
+    分拣记录
+  </div>
+  <div class="log-table-operate">
+    <nz-range-picker style="width:230px;text-align: left;"
+      [(ngModel)]="dateRange"
+      (ngModelChange)="search(true)"
+    ></nz-range-picker>
+    <input nz-input placeholder="请输入SN" class="operate-item" [(ngModel)]="searchSn" style="width: 9.5em"/>
+    <nz-select [(ngModel)]="searchDeviceType" (ngModelChange)="searchDeviceTypeChange()" nzAllowClear nzPlaceHolder="请选择设备类型" class="operate-item" style="width: 10.5em">
+      <nz-option [nzValue]="'PON_GATEWAY'" nzLabel="PON网关"></nz-option>
+      <nz-option [nzValue]="'SET_TOP_BOX'" nzLabel="机顶盒"></nz-option>
+    </nz-select>
+    <nz-select [(ngModel)]="searchDeviceNo" nzAllowClear nzPlaceHolder="请选择设备型号" class="operate-item" style="width: 10.5em">
+      <nz-option *ngFor="let device of deviceNoList" [nzValue]="device" [nzLabel]="device"></nz-option>
+    </nz-select>
+    <nz-select [(ngModel)]="searchGoodQuality" nzAllowClear nzPlaceHolder="是否良品" class="operate-item" style="width: 7.5em">
+      <nz-option [nzValue]="true" nzLabel="是"></nz-option>
+      <nz-option [nzValue]="false" nzLabel="否"></nz-option>
+    </nz-select>
+    <nz-select [(ngModel)]="searchFailurePhenomenon" nzAllowClear nzPlaceHolder="请选择故障现象" class="operate-item" style="width: 10.5em">
+      <nz-option *ngFor="let fp of failurePhenomenonList" [nzValue]="fp" [nzLabel]="fp"></nz-option>
+    </nz-select>
+    <nz-select [(ngModel)]="searchOperator" nzAllowClear nzPlaceHolder="请选择运营商" class="operate-item" style="width: 9.5em">
+      <nz-option [nzValue]="1" nzLabel="联通"></nz-option>
+      <nz-option [nzValue]="2" nzLabel="移动"></nz-option>
+      <nz-option [nzValue]="3" nzLabel="电信"></nz-option>
+    </nz-select>
+    <button nz-button nzType="primary" (click)="search(true)" class="operate-item">查询</button>
+    <button nz-button nzType="primary" (click)="download()" class="operate-item"><i nz-icon nzType="export" nzTheme="outline"></i>导出</button>
+  </div>
+  <nz-table
+    class="log-table"
+    #table
+    nzSize="middle"
+    [nzData]="logList"
+    [nzLoading]="loading"
+    [nzTotal]="total"
+    [(nzPageIndex)]="pageIndex"
+    [(nzPageSize)]="pageSize"
+    [nzFrontPagination]="false"
+    [nzShowQuickJumper]="true"
+    [nzShowSizeChanger]="true"
+    [nzPageSizeOptions]="[20, 50, 80]"
+    [nzShowTotal]="totalTemplate"
+    (nzPageIndexChange)="search()"
+    (nzPageSizeChange)="search(true)"
+    [nzScroll]="{ x:'1650px', y: 'calc(100vh - 335px)' }"
+    >
+    <thead>
+      <tr>
+        <th nzWidth="50px">序号</th>
+        <th nzWidth="150px">生产序列号</th>
+        <th nzWidth="130px">生产厂家</th>
+        <th nzWidth="150px">设备型号</th>
+        <th nzWidth="200px">物料号</th>
+        <th nzWidth="100px">运营商</th>
+        <th nzWidth="100px">是否良品</th>
+        <th nzWidth="150px">故障现象</th>
+        <th nzWidth="200px">故障描述</th>
+        <th nzWidth="150px">开始时间</th>
+        <th nzWidth="150px">结束时间</th>
+        <th nzWidth="70px">省份</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of table.data">
+        <td>{{data.index}}</td>
+        <td>{{data.sn}}</td>
+        <td>{{data.manufacturer}}</td>
+        <td>{{data.deviceNo}}</td>
+        <td>{{data.deviceCode}}</td>
+        <td>{{data.operatorStr}}</td>
+        <td>{{data.goodQualityStr}}</td>
+        <td>{{data.phenomenon}}</td>
+        <td>{{data.failDesc}}</td>
+        <td>{{data.startTimeStr}}</td>
+        <td>{{data.endTimeStr}}</td>
+        <td>{{data.areaCode}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<ng-template #totalTemplate let-total>
+  总数为 {{total}} 条
+</ng-template>

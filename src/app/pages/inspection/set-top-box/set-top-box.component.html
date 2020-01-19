@@ -1,0 +1,69 @@
+<div class="input-row clearfix">
+  <div class="input-row-header clearfix">
+    <div class="input-row-header-title">
+      机顶盒
+    </div>
+    <div class="input-row-top-right">
+      <span class="label-required">运营商<i nz-icon nzType="info-circle" nzTheme="outline" style="padding: 0 3px; font-size: .8em;"></i>:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="selectedOperator" (ngModelChange)="inputSn()" [class.red-input]="!selectedOperator">
+          <nz-option [nzValue]="1" nzLabel="联通"></nz-option>
+          <nz-option [nzValue]="2" nzLabel="移动"></nz-option>
+          <nz-option [nzValue]="3" nzLabel="电信"></nz-option>
+        </nz-select>
+      </span>
+      <span class="label-required">省份:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="selectedProvince" [nzLoading]="provinceList.length === 0" (ngModelChange)="inputSn()" [class.red-input]="!selectedProvince">
+          <nz-option *ngFor="let p of provinceList" [nzValue]="p.key" [nzLabel]="p.desc"></nz-option>
+        </nz-select>
+      </span>
+    </div>
+  </div>
+  <div class="input-row-content clearfix">
+    <div class="left-content">
+      <div class="content-title">扫码信息</div>
+      <div class="content-input clearfix">
+        <div class="input-box">
+          <span class="input-label label-required">SN:</span>
+          <input nz-input [(ngModel)]="sn" class="input-item" placeholder="自动识别" (blur)="inputSn()" (keyup.enter)="inputSn()" #snInput [class.red-input]="!sn"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">设备型号:</span>
+          <input nz-input [(ngModel)]="deviceNo" placeholder="自动识别" class="input-item"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">物料号:</span>
+          <input nz-input [(ngModel)]="deviceCode" placeholder="自动识别" class="input-item"/>
+        </div>
+        <!-- <div class="confirm-box">
+          <span class="input-label">&nbsp;</span>
+          <button nz-button nzType="primary" (click)="doInspection()" [nzLoading]="loading" [disabled]="!canDoInspection()">一键检测</button>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="result-row" #resultRow>
+  <nz-spin [nzSpinning]="loading">
+    <app-inspection-table
+      [useSingleManualInspection]="true"
+      [deviceInfo]="initData"
+      [autoInspectionList]="autoInspectionList"
+      [manualInspectionList]="manualInspectionList"
+      [loading]="loading"
+      deviceType="SET_TOP_BOX"
+      wsItemType="TOOL_ITEM"
+      wsFinishType="SET_BOX_STATUS"
+      (startLoading)="this.loading=true"
+      (finishLoading)="this.loading=false"
+      (startInspection)="startAutoInspection()"
+      (finishInspection)="finishAutoInspection()"
+      #inpectionTable
+    ></app-inspection-table>
+    <div class="result-btn">
+      <button nz-button nzType="primary" (click)="finishInspection()" [disabled]="inspectionStatus === 2 || !initData">检测完成</button>
+    </div>
+  </nz-spin>
+</div>
+
+<app-new-sn-input #newSnInput deviceType="SET_TOP_BOX"></app-new-sn-input>

@@ -1,0 +1,38 @@
+<nz-modal
+  [nzVisible]="modalVisible"
+  nzTitle="设备信息"
+  (nzOnOk)="handleOk()"
+  (nzOnCancel)="handleCancel()"
+  [nzFooter]="modalFooter"
+  nzClassName="new-sn-input-modal"
+  nzWidth="420px"
+>
+  <div>请手工输入设备信息</div>
+  <div nz-row>
+    <div nz-col nzSpan="8" class="new-sn-input-label">
+      <span class="label-required">SN:</span>
+    </div>
+    <div nz-col nzSpan="14"><input nz-input [(ngModel)]="sn" readonly="readonly" disabled/></div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8" class="new-sn-input-label">
+      <span class="label-required">设备型号:</span>
+    </div>
+    <div nz-col nzSpan="14">
+      <nz-select [(ngModel)]="deviceNo" style="width: 100%">
+        <nz-option *ngFor="let no of deviceNoList" [nzValue]="no" [nzLabel]="no"></nz-option>
+      </nz-select>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8" class="new-sn-input-label">
+      <span class="label-required">物料号:</span>
+    </div>
+    <div nz-col nzSpan="14"><input nz-input [(ngModel)]="deviceCode"/></div>
+  </div>
+
+  <ng-template #modalFooter>
+    <button nz-button nzType="default" (click)="handleCancel()">取消</button>
+    <button nz-button nzType="primary" (click)="handleOk()" [nzLoading]="loading" [disabled]="!canConfirm()">确认</button>
+  </ng-template>
+</nz-modal>

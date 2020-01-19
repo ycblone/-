@@ -1,0 +1,54 @@
+<!-- <router-outlet></router-outlet> -->
+<nz-layout>
+  <nz-header class="header">
+    <div class="top-right-btn-container">
+      <span>{{username}}</span>
+      <button nz-button nzType="link" (click)="logout()">注销</button>
+    </div>
+
+    <div class="logo-image"></div>
+    <div class="logo-text">终端分拣工具</div>
+  </nz-header>
+</nz-layout>
+<nz-layout>
+  <nz-sider nzWidth="116px" nzTheme="dark" #nzSider style="height: calc(100vh - 64px)">
+    <ul nz-menu nzTheme="dark" nzMode="inline" class="menu-content" [nzSelectable]="false">
+      <li nz-submenu nzTitle="设备分拣" nzOpen (nzOpenChange)="updateScrollBar()">
+        <ul>
+          <li nz-menu-item routerLink="/pages/inspection/pon-gateway" routerLinkActive="ant-menu-item-selected">
+            <app-svg href="/assets/images/PON网关.svg#m" [fill]="'white'" [fontSize]="'38px'"></app-svg>
+            <br>
+            <span class="menu-text">线上宣讲会</span>
+          </li>
+        </ul>
+        <ul>
+          <li nz-menu-item routerLink="/pages/inspection/set-top-box" routerLinkActive="ant-menu-item-selected">
+            <app-svg href="/assets/images/机顶盒.svg#m" [fill]="'white'" [fontSize]="'38px'"></app-svg>
+            <br>
+            <span class="menu-text">机顶盒</span>
+          </li>
+        </ul>
+      </li>
+      <li nz-menu-item routerLink="/pages/upgrade" routerLinkActive="ant-menu-item-selected">
+        <!-- <i nz-icon nzType="cloud-upload" nzTheme="outline"></i> -->
+        <app-svg href="/assets/images/软件升级.svg#m" [fill]="'white'" [fontSize]="'38px'"></app-svg>
+        <br>
+        <span class="menu-text">软件升级</span>
+      </li>
+      <li nz-menu-item routerLink="/pages/log" routerLinkActive="ant-menu-item-selected">
+        <!-- <i nz-icon nzType="history" nzTheme="outline"></i> -->
+        <app-svg href="/assets/images/分拣进度.svg#m" [fill]="'white'" [fontSize]="'38px'"></app-svg>
+        <br>
+        <span class="menu-text">分拣日志</span>
+      </li>
+    </ul>
+  </nz-sider>
+  <nz-layout class="inner-layout">
+    <nz-content class="content-box">
+      <div>
+        <router-outlet></router-outlet>
+      </div>
+
+    </nz-content>
+  </nz-layout>
+</nz-layout>
