@@ -98,8 +98,14 @@ export class InspectionService {
   getOnline() {
     return this.httpClient.get<any>('/onlinePresentations/');
   }
+  getSelect() {
+    return this.httpClient.get<any>('/dualSelect/');
+  }
   delectOnline(id: any) {
     return this.httpClient.delete<any>(`/onlinePresentations/${id}`);
+  }
+  delectSelect(id: any) {
+    return this.httpClient.delete<any>(`/dualSelect/${id}`);
   }
 
 }

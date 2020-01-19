@@ -82,13 +82,13 @@
     </div>
     <div class="input-row-top-right">
       <span class="label-required">修改:
-        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="onlineId" [nzLoading]="onlineSession.length === 0" (ngModelChange)="inputSn()" (nzFocus)="getAllOnline()">
-          <nz-option *ngFor="let p of onlineSession" [nzValue]="p.id" [nzLabel]="p.title"></nz-option>
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="selectId" [nzLoading]="onlineSession.length === 0" (ngModelChange)="inputSn()" (nzFocus)="getAllSelect()">
+          <nz-option *ngFor="let p of selectSession" [nzValue]="p.id" [nzLabel]="p.title"></nz-option>
         </nz-select>
       </span>
       <span class="label-required">删除（选中即删除）:
-        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="delectOnlineId" [nzLoading]="onlineSession.length === 0" (ngModelChange)="delectOnline()" (nzFocus)="getAllOnline()">
-          <nz-option *ngFor="let p of onlineSession" [nzValue]="p.id" [nzLabel]="p.title"></nz-option>
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="delectSelectId" [nzLoading]="onlineSession.length === 0" (ngModelChange)="delectSelect()" (nzFocus)="getAllSelect()">
+          <nz-option *ngFor="let p of selectSession" [nzValue]="p.id" [nzLabel]="p.title"></nz-option>
         </nz-select>
       </span>
     </div>
@@ -99,27 +99,31 @@
       <div class="content-input clearfix">
         <div class="input-box">
           <span class="input-label label-required">开始日期：</span>
-          <input nz-input [(ngModel)]="title" class="input-item" placeholder="例2019-12-25" (blur)="inputSn()" (keyup.enter)="inputSn()" #snInput [class.red-input]="!sn"/>
+          <input nz-input [(ngModel)]="selectStartTime" class="input-item" placeholder="例2019-12-25" (blur)="inputSn()" (keyup.enter)="inputSn()" #snInput [class.red-input]="!sn"/>
         </div>
         <div class="input-box">
           <span class="input-label label-required">截止日期：</span>
-          <input nz-input [(ngModel)]="title" class="input-item" placeholder="例2019-12-25" (blur)="inputSn()" (keyup.enter)="inputSn()" #snInput [class.red-input]="!sn"/>
+          <input nz-input [(ngModel)]="selectEndTime" class="input-item" placeholder="例2019-12-25" (blur)="inputSn()" (keyup.enter)="inputSn()" #snInput [class.red-input]="!sn"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">地点:</span>
+          <input nz-input [(ngModel)]="selectAddress" class="input-item" placeholder="自动识别" (blur)="inputSn()" (keyup.enter)="inputSn()" #snInput [class.red-input]="!sn"/>
         </div>
         <div class="input-box">
           <span class="input-label label-required">面试地点:</span>
-          <input nz-input [(ngModel)]="business" class="input-item" placeholder="自动识别" (blur)="inputSn()" (keyup.enter)="inputSn()" #snInput [class.red-input]="!sn"/>
+          <input nz-input [(ngModel)]="selectMeetingAddress" class="input-item" placeholder="自动识别" (blur)="inputSn()" (keyup.enter)="inputSn()" #snInput [class.red-input]="!sn"/>
         </div>
         <div class="input-box">
           <span class="input-label label-required">主办方:</span>
-          <input nz-input [(ngModel)]="companyName" placeholder="自动识别" class="input-item"/>
+          <input nz-input [(ngModel)]="selectSponsor" placeholder="自动识别" class="input-item"/>
         </div>
         <div class="input-box">
           <span class="input-label label-required">标题:</span>
-          <input nz-input [(ngModel)]="address" placeholder="自动识别" class="input-item"/>
+          <input nz-input [(ngModel)]="selectTitle" placeholder="自动识别" class="input-item"/>
         </div>
         <div class="input-box">
           <span class="input-label label-required">简介:</span>
-          <input nz-input [(ngModel)]="text" placeholder="自动识别" class="input-item"/>
+          <input nz-input [(ngModel)]="selectText" placeholder="自动识别" class="input-item"/>
         </div>
       </div>
     </div>
@@ -128,13 +132,13 @@
       <div class="content-input clearfix">
         <div class="input-box">
           <span class="input-label label-required">图标上传:</span>
-          <nz-upload nzAction="https://jsonplaceholder.typicode.com/posts/" [(nzFileList)]="fileList">
+          <nz-upload nzAction="https://jsonplaceholder.typicode.com/posts/" [(nzFileList)]="selectFileList">
             <button nz-button><i nz-icon nzType="upload"></i><span>点击上传</span></button>
           </nz-upload>
         </div>
         <div class="confirm-box">
           <span class="input-label">&nbsp;</span>
-          <button nz-button nzType="primary" (click)="doInspection()" [nzLoading]="loading">一键检测</button>
+          <button nz-button nzType="primary" (click)="addSelect()" [nzLoading]="loading">一键检测</button>
         </div>
       </div>
     </div>

@@ -31,6 +31,19 @@ export class PonGatewayComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedOperator;
   onlineSession = [];
   // ————————————————
+  selectId = '';
+  delectSelectId = '';
+  selectStartTime = '';
+  selectEndTime = '';
+  selectMeetingAddress = '';
+  selectAddress = '';
+  selectSponsor = '';
+  selectTitle = '';
+  selectText = '';
+  selectIco = '';
+  selectFileList = [];
+  selectSession = [];
+  // _________________
   sn = '';
   autoInspectionList = [];
 
@@ -88,38 +101,37 @@ export class PonGatewayComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.getAllOnline();
-    this.cos = new COS({
-      // 必选参数
-      getAuthorization: (options, callback) => {
-        // 服务端 JS 和 PHP 例子：https://github.com/tencentyun/cos-js-sdk-v5/blob/master/server/
-        // 服务端其他语言参考 COS STS SDK ：https://github.com/tencentyun/qcloud-cos-sts-sdk
-        // STS 详细文档指引看：https://cloud.tencent.com/document/product/436/14048
-        $.get('http://www.qitianoffer.club/sts', data => {
-          const credentials = data.credentials;
-          this.cos = new COS({
-          // callback({
-          Region: 'ap-chengdu',
-            Bucket: 'qitianpubred-1300782360',
-            SecretId: credentials.tmpSecretId,
-            SecretKey: credentials.tmpSecretKey,
-            XCosSecurityToken: credentials.sessionToken,
-          });
-        });
-      }
-    });
-
     // this.cos = new COS({
-    //   SecretId: 'AKIDUeBbvMA1GTINMI9rRzV2dCoGfIsQmGcx',
-    //   SecretKey: 'Rp6KTVQEnna8QSkrjNlzxfDWdVBettdE',
-    // });
+    //     //   // 必选参数
+    //     //   getAuthorization: (options, callback) => {
+    //     //     // 服务端 JS 和 PHP 例子：https://github.com/tencentyun/cos-js-sdk-v5/blob/master/server/
+    //     //     // 服务端其他语言参考 COS STS SDK ：https://github.com/tencentyun/qcloud-cos-sts-sdk
+    //     //     // STS 详细文档指引看：https://cloud.tencent.com/document/product/436/14048
+    //     //     $.get('http://www.qitianoffer.club/sts', data => {
+    //     //       const credentials = data.credentials;
+    //     //       this.cos = new COS({
+    //     //       // callback({
+    //     //       Region: 'ap-chengdu',
+    //     //         Bucket: 'qitianpubred-1300782360',
+    //     //         SecretId: credentials.tmpSecretId,
+    //     //         SecretKey: credentials.tmpSecretKey,
+    //     //         XCosSecurityToken: credentials.sessionToken,
+    //     //       });
+    //     //     });
+    //     //   }
+    //     // });
+    this.cos = new COS({
+      SecretId: 'AKIDUeBbvMA1GTINMI9rRzV2dCoGfIsQmGcx',
+      SecretKey: 'Rp6KTVQEnna8QSkrjNlzxfDWdVBettdE',
+    });
     // timer(2000).subscribe(() => {
-    //   // this.cos.getBucket({
-    //   //   Bucket: 'examplebucket-1250000000', /* 必须 */
-    //   //   Region: 'COS_REGION', /* 存储桶所在地域，必须字段 */
-    //   //   Prefix: 'a/', /* 非必须 */
-    //   // }, (err, data) => {
-    //   //   console.log(err || data.Contents);
-    //   // });
+      // this.cos.getBucket({
+      //   Bucket: 'examplebucket-1250000000', /* 必须 */
+      //   Region: 'COS_REGION', /* 存储桶所在地域，必须字段 */
+      //   Prefix: 'a/', /* 非必须 */
+      // }, (err, data) => {
+      //   console.log(err || data.Contents);
+      // });
     //
     // });
   }
@@ -128,7 +140,13 @@ export class PonGatewayComponent implements OnInit, AfterViewInit, OnDestroy {
   getAllOnline() {
     this.iService.getOnline().subscribe(res => {
         this.onlineSession = res.data;
-        console.log(this.onlineSession);
+    });
+  }
+  // 获取所有双选会
+  getAllSelect() {
+    this.iService.getSelect().subscribe(res => {
+        this.selectSession = res.data;
+        console.log(this.selectSession);
     });
   }
   // 删除某个宣讲会
@@ -137,21 +155,27 @@ export class PonGatewayComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log('删除', res);
     });
   }
-// 点击上传
+  // 删除某个双选会
+  delectSelect() {
+    this.iService.delectSelect(this.delectSelectId).subscribe(res => {
+      console.log('删除', res);
+    });
+  }
+// 点击上传新建宣讲会信息
   doInspection() {
     console.log('id', this.onlineId);
-    // this.cos.putObject({
-    //   Bucket: 'qitianpubred-1300782360', /* 必须 */
-    //   Region: 'ap-chengdu',     /* 存储桶所在地域，必须字段 */
-    //   Key: 'img',              /* 必须 */
-    //   StorageClass: 'STANDARD',
-    //   Body: this.fileList[0].originFileObj, // 上传文件对象
-    //   // onProgress(progressData) {
-    //   //   console.log(JSON.stringify(progressData));
-    //   // }
-    // }, (err, res) => {
-    //   console.log(err || res);
-    // });
+    this.cos.putObject({
+      Bucket: 'qitianpubred-1300782360', /* 必须 */
+      Region: 'ap-chengdu',     /* 存储桶所在地域，必须字段 */
+      Key: `img/${this.fileList[0].name}`,              /* 必须 */
+      StorageClass: 'STANDARD',
+      Body: this.fileList[0].originFileObj, // 上传文件对象
+      onProgress(progressData) {
+        console.log(JSON.stringify(progressData));
+      }
+    }, (err, res) => {
+      console.log(err || res);
+    });
     this.httpClient.post<any>('/onlinePresentations/', {
       id: this.onlineId,
       business: this.business,
@@ -163,10 +187,26 @@ export class PonGatewayComponent implements OnInit, AfterViewInit, OnDestroy {
       title: this.title,
     })
       .subscribe(res => {
-        console.log(res);
+        console.log('宣讲会新增', res);
       });
   }
-
+  // 点击上传新增双选会信息
+addSelect() {
+  this.httpClient.post<any>('/dualSelect/', {
+    id: this.selectId,
+    address: this.selectAddress,
+    startDate: this.selectStartTime,
+    icon: this.selectIco,
+    interviewLocation: this.selectMeetingAddress,
+    intro: this.selectText,
+    sponsor: this.selectSponsor,
+    expirationDate: this.selectEndTime,
+    title: this.selectTitle,
+  })
+    .subscribe(res => {
+      console.log('双选会新增', res);
+    });
+}
   startAutoInspection() {
     this.inspectionStatus = InspectionStatus.InSpection;
   }
