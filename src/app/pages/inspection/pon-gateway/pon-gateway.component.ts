@@ -18,8 +18,20 @@ declare const $: any;
   styleUrls: ['./pon-gateway.component.less']
 })
 export class PonGatewayComponent implements OnInit, AfterViewInit, OnDestroy {
-  sn = '';
+  onlineId = '';
+  delectOnlineId = '';
+  title = '';
+  business = '';
+  companyName = '';
+  address = '';
+  text = '';
+  filePath = '';
+  pptPath = '';
   fileList = [];
+  selectedOperator;
+  onlineSession = [];
+  // ————————————————
+  sn = '';
   autoInspectionList = [];
 
   manualInspectionList = [];
@@ -33,7 +45,7 @@ export class PonGatewayComponent implements OnInit, AfterViewInit, OnDestroy {
 
   selectedProvince = '';
 
-  selectedOperator;
+  // selectedOperator;
 
   deviceNo = '';
 
@@ -75,6 +87,7 @@ export class PonGatewayComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.getAllOnline();
     this.cos = new COS({
       // 必选参数
       getAuthorization: (options, callback) => {
@@ -109,21 +122,134 @@ export class PonGatewayComponent implements OnInit, AfterViewInit, OnDestroy {
     //   // });
     //
     // });
+  }
 
+  // 获取所有线上宣讲会
+  getAllOnline() {
     this.iService.getOnline().subscribe(res => {
-        console.log('haha', res);
-        this.cos.getBucket({
-          Bucket: 'qitianpubred-1300782360', /* 必须 */
-          Region: 'ap-chengdu',     /* 存储桶所在地域，必须字段 */
-          Prefix: 'img/',           /* 非必须 */
-        }, (err, data) => {
-          console.log(err || data.Contents);
-        });
+        this.onlineSession = res.data;
+        console.log(this.onlineSession);
+    });
+  }
+  // 删除某个宣讲会
+  delectOnline() {
+    this.iService.delectOnline(this.delectOnlineId).subscribe(res => {
+      console.log('删除', res);
+    });
+  }
+// 点击上传
+  doInspection() {
+    console.log('id', this.onlineId);
+    // this.cos.putObject({
+    //   Bucket: 'qitianpubred-1300782360', /* 必须 */
+    //   Region: 'ap-chengdu',     /* 存储桶所在地域，必须字段 */
+    //   Key: 'img',              /* 必须 */
+    //   StorageClass: 'STANDARD',
+    //   Body: this.fileList[0].originFileObj, // 上传文件对象
+    //   // onProgress(progressData) {
+    //   //   console.log(JSON.stringify(progressData));
+    //   // }
+    // }, (err, res) => {
+    //   console.log(err || res);
+    // });
+    this.httpClient.post<any>('/onlinePresentations/', {
+      id: this.onlineId,
+      business: this.business,
+      companyName: this.companyName,
+      cover: this.filePath,
+      ppt: this.pptPath,
+      deliveryAddress: this.address,
+      isWangjiansheng: this.selectedOperator,
+      title: this.title,
+    })
+      .subscribe(res => {
+        console.log(res);
+      });
+  }
+
+  startAutoInspection() {
+    this.inspectionStatus = InspectionStatus.InSpection;
+  }
+
+  finishAutoInspection() {
+    this.inspectionStatus = InspectionStatus.FinishSpection;
+  }
+
+  finishInspection() {
+    // return this.modalService.confirm({
+    //   nzTitle: '提示',
+    //   nzContent: `完成对设备<small>（sn:${this.initData.sn}）</small>的检测吗？`,
+    //   nzOkText: '确定',
+    //   nzCancelText: '取消',
+    //   nzOnOk: () => {
+    //     this._finishInspection((success) => {
+    //       // tslint:disable-next-line: no-unused-expression
+    //       success && this.init();
+    //     });
+    //   }
+    // });
+    this._finishInspection((success) => {
+      // tslint:disable-next-line: no-unused-expression
+      success && this.init();
+    });
+  }
+
+  private _finishInspection(cb?: any) {
+    this.loading = true;
+    this.iService.finishInspection(this.initData.id).subscribe(
+      () => {
+        this.loading = false;
+        this.inspectionStatus = InspectionStatus.AllDone;
+        this.lastUnfinishDeviceSn = '';
+        this.service.clearSavedParams();
+        // tslint:disable-next-line: no-unused-expression
+        cb && cb(true);
       },
       err => {
+        this.loading = false;
+        // tslint:disable-next-line: no-unused-expression
+        cb && cb(false);
+      }
+    );
+  }
+
+  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+    if (this.inspectionStatus === InspectionStatus.InSpection) {
+      return new Promise(resolve => {
+        this.modalService.info({
+          nzTitle: '提示',
+          nzContent: '请稍候，检测正在进行中',
+          nzOnOk: () => {
+            resolve(false);
+          }
+        });
       });
-    this.initParam();
-    this.init();
+    } else if (this.inspectionStatus !== InspectionStatus.NotInit
+      && this.inspectionStatus !== InspectionStatus.AllDone
+      && this.initData) {
+      // 将现有状态保存
+      this.service.saveParams(this.selectedOperator, this.selectedProvince, this.initData.sn,
+        this.ip, this.lightPower, this.powerBias, this.originalVersion);
+      return true;
+    } else {
+      this.service.clearSavedParams();
+      return true;
+    }
+  }
+
+  goToUpdatePage() {
+    this.navigateToUpdatePage();
+  }
+
+  private navigateToUpdatePage() {
+    this.router.navigate(['/pages/upgrade', {
+      ip: this.ip,
+      sn: this.sn,
+      materialsNum: this.deviceCode,
+      deviceNum: this.deviceNo,
+      operator: this.selectedOperator,
+      selectedProvince: this.selectedProvince,
+    }]);
   }
 
   init() {
@@ -298,119 +424,6 @@ export class PonGatewayComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return true;
   }
-
-  doInspection() {
-    this.cos.putObject({
-      Bucket: 'qitianpubred-1300782360', /* 必须 */
-      Region: 'ap-chengdu',     /* 存储桶所在地域，必须字段 */
-      Key: 'img',              /* 必须 */
-      StorageClass: 'STANDARD',
-      Body: this.fileList[0].originFileObj, // 上传文件对象
-      // onProgress(progressData) {
-      //   console.log(JSON.stringify(progressData));
-      // }
-    }, (err, res) => {
-      console.log(err || res);
-    });
-    const data = JSON.parse(JSON.stringify(this.initData));
-    delete data.itemList;
-    data.ip = this.ip;
-    data.deviceNo = this.deviceNo;
-    data.deviceCode = this.deviceCode;
-    data.lightPower = this.lightPower;
-    data.areaCode = this.selectedProvince;
-    data.operator = this.selectedOperator;
-    data.orignalVersion = this.originalVersion;
-    data.powerBias = Number.parseFloat(this.powerBias);
-
-    this.inspectionTable.doInspection(data);
-  }
-
-  startAutoInspection() {
-    this.inspectionStatus = InspectionStatus.InSpection;
-  }
-
-  finishAutoInspection() {
-    this.inspectionStatus = InspectionStatus.FinishSpection;
-  }
-
-  finishInspection() {
-    // return this.modalService.confirm({
-    //   nzTitle: '提示',
-    //   nzContent: `完成对设备<small>（sn:${this.initData.sn}）</small>的检测吗？`,
-    //   nzOkText: '确定',
-    //   nzCancelText: '取消',
-    //   nzOnOk: () => {
-    //     this._finishInspection((success) => {
-    //       // tslint:disable-next-line: no-unused-expression
-    //       success && this.init();
-    //     });
-    //   }
-    // });
-    this._finishInspection((success) => {
-      // tslint:disable-next-line: no-unused-expression
-      success && this.init();
-    });
-  }
-
-  private _finishInspection(cb?: any) {
-    this.loading = true;
-    this.iService.finishInspection(this.initData.id).subscribe(
-      () => {
-        this.loading = false;
-        this.inspectionStatus = InspectionStatus.AllDone;
-        this.lastUnfinishDeviceSn = '';
-        this.service.clearSavedParams();
-        // tslint:disable-next-line: no-unused-expression
-        cb && cb(true);
-      },
-      err => {
-        this.loading = false;
-        // tslint:disable-next-line: no-unused-expression
-        cb && cb(false);
-      }
-    );
-  }
-
-  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
-    if (this.inspectionStatus === InspectionStatus.InSpection) {
-      return new Promise(resolve => {
-        this.modalService.info({
-          nzTitle: '提示',
-          nzContent: '请稍候，检测正在进行中',
-          nzOnOk: () => {
-            resolve(false);
-          }
-        });
-      });
-    } else if (this.inspectionStatus !== InspectionStatus.NotInit
-      && this.inspectionStatus !== InspectionStatus.AllDone
-      && this.initData) {
-      // 将现有状态保存
-      this.service.saveParams(this.selectedOperator, this.selectedProvince, this.initData.sn,
-        this.ip, this.lightPower, this.powerBias, this.originalVersion);
-      return true;
-    } else {
-      this.service.clearSavedParams();
-      return true;
-    }
-  }
-
-  goToUpdatePage() {
-    this.navigateToUpdatePage();
-  }
-
-  private navigateToUpdatePage() {
-    this.router.navigate(['/pages/upgrade', {
-      ip: this.ip,
-      sn: this.sn,
-      materialsNum: this.deviceCode,
-      deviceNum: this.deviceNo,
-      operator: this.selectedOperator,
-      selectedProvince: this.selectedProvince,
-    }]);
-  }
-
   // formatterDb(value: number) {
   //   return `${value}db`;
   // }

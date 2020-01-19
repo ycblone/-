@@ -96,6 +96,10 @@ export class InspectionService {
     return this.httpClient.get<any>(`/sortingTool/getAllDeviceNo/${deviceType}`);
   }
   getOnline() {
-    return this.httpClient.get<any>('/dualSelect/');
+    return this.httpClient.get<any>('/onlinePresentations/');
   }
+  delectOnline(id: any) {
+    return this.httpClient.delete<any>(`/onlinePresentations/${id}`);
+  }
+
 }
