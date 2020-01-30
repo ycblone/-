@@ -98,14 +98,38 @@ export class InspectionService {
   getOnline() {
     return this.httpClient.get<any>('/onlinePresentations/');
   }
+  getSwiper() {
+    return this.httpClient.get<any>('/onlinePresentationsBanners/');
+  }
   getSelect() {
     return this.httpClient.get<any>('/dualSelect/');
+  }
+  getCompany() {
+    return this.httpClient.get<any>('/company/');
+  }
+  getPractice() {
+    return this.httpClient.get<any>('/internship/');
+  }
+  getJob() {
+    return this.httpClient.get<any>('/post/');
+  }
+  getSelectType() {
+    return this.httpClient.get<any>('/dualSelectType/');
   }
   delectOnline(id: any) {
     return this.httpClient.delete<any>(`/onlinePresentations/${id}`);
   }
   delectSelect(id: any) {
     return this.httpClient.delete<any>(`/dualSelect/${id}`);
+  }
+  delectCompany(id: any) {
+    return this.httpClient.delete<any>(`/company/${id}`);
+  }
+  delectPractice(id: any) {
+    return this.httpClient.delete<any>(`/internship/${id}`);
+  }
+  delectJob(id: any) {
+    return this.httpClient.delete<any>(`/post/${id}`);
   }
 
 }

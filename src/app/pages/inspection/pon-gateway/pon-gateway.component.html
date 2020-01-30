@@ -5,13 +5,13 @@
     </div>
     <div class="input-row-top-right">
       <span class="label-required">往届生<i nz-icon nzType="info-circle" nzTheme="outline" style="padding: 0 3px; font-size: .8em;"></i>:
-        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="selectedOperator" (ngModelChange)="inputSn()" [class.red-input]="!selectedOperator">
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="selectedOperator" (ngModelChange)="inputSn($event)" [class.red-input]="!selectedOperator">
           <nz-option [nzValue]="1" nzLabel="可投"></nz-option>
           <nz-option [nzValue]="0" nzLabel="不可投"></nz-option>
         </nz-select>
       </span>
       <span class="label-required">修改:
-        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="onlineId" [nzLoading]="onlineSession.length === 0" (ngModelChange)="inputSn()" (nzFocus)="getAllOnline()">
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="onlineId" [nzLoading]="onlineSession.length === 0" (ngModelChange)="inputSn($event)" (nzFocus)="getAllOnline()">
           <nz-option *ngFor="let p of onlineSession" [nzValue]="p.id" [nzLabel]="p.title"></nz-option>
         </nz-select>
       </span>
@@ -28,11 +28,11 @@
       <div class="content-input clearfix">
         <div class="input-box">
           <span class="input-label label-required">标题:</span>
-          <input nz-input [(ngModel)]="title" class="input-item" placeholder="自动识别" (blur)="inputSn()" (keyup.enter)="inputSn()" #snInput [class.red-input]="!sn"/>
+          <input nz-input [(ngModel)]="title" class="input-item" placeholder="自动识别" (blur)="inputSn($event)" (keyup.enter)="inputSn($event)"/>
         </div>
         <div class="input-box">
           <span class="input-label label-required">行业:</span>
-          <input nz-input [(ngModel)]="business" class="input-item" placeholder="自动识别" (blur)="inputSn()" (keyup.enter)="inputSn()" #snInput [class.red-input]="!sn"/>
+          <input nz-input [(ngModel)]="business" class="input-item" placeholder="自动识别" (blur)="inputSn($event)" (keyup.enter)="inputSn($event)"/>
         </div>
         <div class="input-box">
           <span class="input-label label-required">公司名称:</span>
@@ -53,13 +53,19 @@
       <div class="content-input clearfix">
         <div class="input-box">
           <span class="input-label label-required">封面图片上传:</span>
-          <nz-upload nzAction="https://jsonplaceholder.typicode.com/posts/" [(nzFileList)]="fileList">
+          <nz-upload [(nzFileList)]="fileList" (nzChange)="upLoadChange($event)">
             <button nz-button><i nz-icon nzType="upload"></i><span>点击上传</span></button>
           </nz-upload>
         </div>
         <div class="input-box">
           <span class="input-label label-required">ppt图片上传:</span>
-          <nz-upload nzAction="https://jsonplaceholder.typicode.com/posts/">
+          <nz-upload [(nzFileList)]="pptFileList" (nzChange)="upLoadChangePpt($event)">
+            <button nz-button><i nz-icon nzType="upload"></i><span>点击上传</span></button>
+          </nz-upload>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">云宣讲视频上传:</span>
+          <nz-upload [(nzFileList)]="videoFileList" (nzChange)="upLoadChangeVideo($event)">
             <button nz-button><i nz-icon nzType="upload"></i><span>点击上传</span></button>
           </nz-upload>
         </div>
@@ -74,6 +80,34 @@
       </div>
     </div>
   </div>
+  <div class="input-row-header clearfix">
+    <div class="input-row-header-title">
+      轮播图上传
+    </div>
+    <div class="input-row-top-right">
+      <span class="label-required">要修改的轮播:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="swiperId" [nzLoading]="onlineSession.length === 0" (nzFocus)="getAllSwiper()">
+          <nz-option *ngFor="let p of swiperSession" [nzValue]="p.id" [nzLabel]="p.onlinePresentations.title"></nz-option>
+        </nz-select>
+      </span>
+      <span class="label-required">选择双选会:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="swiperonlineId" [nzLoading]="onlineSession.length === 0" (nzFocus)="getAllOnline()">
+          <nz-option *ngFor="let p of onlineSession" [nzValue]="p.id" [nzLabel]="p.title"></nz-option>
+        </nz-select>
+      </span>
+      <!--<div class="input-box">-->
+        <span class="input-label label-required">封面图片上传:</span>
+        <nz-upload [(nzFileList)]="swiperFileList" (nzChange)="upLoadSwiperChange($event)">
+          <button nz-button><i nz-icon nzType="upload"></i><span>点击上传</span></button>
+        </nz-upload>
+      <div class="confirm-box">
+        <span class="input-label">&nbsp;</span>
+        <button nz-button nzType="primary" (click)="doSwiper()" [nzLoading]="loading">一键提交</button>
+      </div>
+
+    <!--</div>-->
+    </div>
+  </div>
 </div>
 <div class="input-row clearfix">
   <div class="input-row-header clearfix">
@@ -82,14 +116,24 @@
     </div>
     <div class="input-row-top-right">
       <span class="label-required">修改:
-        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="selectId" [nzLoading]="onlineSession.length === 0" (ngModelChange)="inputSn()" (nzFocus)="getAllSelect()">
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="selectId" [nzLoading]="selectSession.length === 0" (ngModelChange)="inputSelect($event)" (nzFocus)="getAllSelect()">
           <nz-option *ngFor="let p of selectSession" [nzValue]="p.id" [nzLabel]="p.title"></nz-option>
         </nz-select>
       </span>
       <span class="label-required">删除（选中即删除）:
-        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="delectSelectId" [nzLoading]="onlineSession.length === 0" (ngModelChange)="delectSelect()" (nzFocus)="getAllSelect()">
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="delectSelectId" [nzLoading]="selectSession.length === 0" (ngModelChange)="delectSelect()" (nzFocus)="getAllSelect()">
           <nz-option *ngFor="let p of selectSession" [nzValue]="p.id" [nzLabel]="p.title"></nz-option>
         </nz-select>
+      </span>
+      <span class="label-required">挂靠到:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="sendTypeId" [nzLoading]="selectSession.length === 0" (ngModelChange)="doSendType()" (nzFocus)="getAllSelectType()">
+          <nz-option *ngFor="let p of selectType" [nzValue]="p.id" [nzLabel]="p.title"></nz-option>
+        </nz-select>
+      </span>
+      <span class="label-required">从
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="deleteTypeId" [nzLoading]="selectSession.length === 0" (ngModelChange)="doDeleteType()" (nzFocus)="getAllSelectType()">
+          <nz-option *ngFor="let p of selectType" [nzValue]="p.id" [nzLabel]="p.title"></nz-option>
+        </nz-select>删除挂靠
       </span>
     </div>
   </div>
@@ -99,19 +143,19 @@
       <div class="content-input clearfix">
         <div class="input-box">
           <span class="input-label label-required">开始日期：</span>
-          <input nz-input [(ngModel)]="selectStartTime" class="input-item" placeholder="例2019-12-25" (blur)="inputSn()" (keyup.enter)="inputSn()" #snInput [class.red-input]="!sn"/>
+          <input nz-input [(ngModel)]="selectStartTime" class="input-item" placeholder="例2019-12-25" (blur)="inputSn($event)" (keyup.enter)="inputSn($event)"/>
         </div>
         <div class="input-box">
           <span class="input-label label-required">截止日期：</span>
-          <input nz-input [(ngModel)]="selectEndTime" class="input-item" placeholder="例2019-12-25" (blur)="inputSn()" (keyup.enter)="inputSn()" #snInput [class.red-input]="!sn"/>
+          <input nz-input [(ngModel)]="selectEndTime" class="input-item" placeholder="例2019-12-25" (blur)="inputSn($event)" (keyup.enter)="inputSn($event)"/>
         </div>
         <div class="input-box">
           <span class="input-label label-required">地点:</span>
-          <input nz-input [(ngModel)]="selectAddress" class="input-item" placeholder="自动识别" (blur)="inputSn()" (keyup.enter)="inputSn()" #snInput [class.red-input]="!sn"/>
+          <input nz-input [(ngModel)]="selectAddress" class="input-item" placeholder="自动识别" (blur)="inputSn($event)" (keyup.enter)="inputSn($event)"/>
         </div>
         <div class="input-box">
           <span class="input-label label-required">面试地点:</span>
-          <input nz-input [(ngModel)]="selectMeetingAddress" class="input-item" placeholder="自动识别" (blur)="inputSn()" (keyup.enter)="inputSn()" #snInput [class.red-input]="!sn"/>
+          <input nz-input [(ngModel)]="selectMeetingAddress" class="input-item" placeholder="自动识别" (blur)="inputSn($event)" (keyup.enter)="inputSn($event)"/>
         </div>
         <div class="input-box">
           <span class="input-label label-required">主办方:</span>
@@ -132,13 +176,222 @@
       <div class="content-input clearfix">
         <div class="input-box">
           <span class="input-label label-required">图标上传:</span>
-          <nz-upload nzAction="https://jsonplaceholder.typicode.com/posts/" [(nzFileList)]="selectFileList">
+          <nz-upload [(nzFileList)]="selectFileList" (nzChange)="upLoadChangeSelectIco($event)">
             <button nz-button><i nz-icon nzType="upload"></i><span>点击上传</span></button>
           </nz-upload>
         </div>
         <div class="confirm-box">
           <span class="input-label">&nbsp;</span>
           <button nz-button nzType="primary" (click)="addSelect()" [nzLoading]="loading">一键检测</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="input-row clearfix">
+  <div class="input-row-header clearfix">
+    <div class="input-row-header-title">
+      新增公司
+    </div>
+    <div class="input-row-top-right">
+      <span class="label-required">修改:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="companyId" [nzLoading]="companySession.length === 0" (ngModelChange)="inputCompany($event)" (nzFocus)="getAllCompany()">
+          <nz-option *ngFor="let p of companySession" [nzValue]="p.id" [nzLabel]="p.name"></nz-option>
+        </nz-select>
+      </span>
+      <span class="label-required">删除（选中即删除）:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="delectCompanyId" [nzLoading]="companySession.length === 0" (ngModelChange)="delectCompany()" (nzFocus)="getAllCompany()">
+          <nz-option *ngFor="let p of companySession" [nzValue]="p.id" [nzLabel]="p.name"></nz-option>
+        </nz-select>
+      </span>
+      <span class="label-required">挂靠到:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="toMeetingId" [nzLoading]="selectSession.length === 0" (ngModelChange)="doSendMeeting()" (nzFocus)="getAllSelect()">
+          <nz-option *ngFor="let p of selectSession" [nzValue]="p.id" [nzLabel]="p.title"></nz-option>
+        </nz-select>
+      </span>
+      <span class="label-required">从
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="deleteMeetingId" [nzLoading]="selectSession.length === 0" (ngModelChange)="doDeleteCompanyTo()" (nzFocus)="getAllSelect()">
+          <nz-option *ngFor="let p of selectSession" [nzValue]="p.id" [nzLabel]="p.title"></nz-option>
+        </nz-select>删除挂靠
+      </span>
+    </div>
+  </div>
+  <div class="input-row-content clearfix">
+    <div class="left-content">
+      <div class="content-title">文字信息</div>
+      <div class="content-input clearfix">
+        <div class="input-box">
+          <span class="input-label label-required">名称：</span>
+          <input nz-input [(ngModel)]="createCompanyName" class="input-item" placeholder="公司名称"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">行业：</span>
+          <input nz-input [(ngModel)]="companyBusiness" class="input-item" placeholder="例IT"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">介绍:</span>
+          <input nz-input [(ngModel)]="companyIntro" class="input-item" placeholder="公司简介"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">地点:</span>
+          <input nz-input [(ngModel)]="createCompanyAddress" class="input-item" placeholder="公司地址"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">规模:</span>
+          <input nz-input [(ngModel)]="companyScale" placeholder="公司规模" class="input-item"/>
+        </div>
+      </div>
+    </div>
+    <div class="right-content">
+      <div class="content-title">上传文件</div>
+      <div class="content-input clearfix">
+        <div class="input-box">
+          <span class="input-label label-required">图标上传:</span>
+          <nz-upload [(nzFileList)]="companyFileList" (nzChange)="upLoadChangeCompanyIco($event)">
+            <button nz-button><i nz-icon nzType="upload"></i><span>点击上传</span></button>
+          </nz-upload>
+        </div>
+        <div class="confirm-box">
+          <span class="input-label">&nbsp;</span>
+          <button nz-button nzType="primary" (click)="addCompany()" [nzLoading]="loading">新建公司</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="input-row clearfix">
+  <div class="input-row-header clearfix">
+    <div class="input-row-header-title">
+      新增职位
+    </div>
+    <div class="input-row-top-right">
+      <span class="label-required">公司:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="jobcompanyId" [nzLoading]="companySession.length === 0" (ngModelChange)="throughCompany($event)" (nzFocus)="getAllCompany()">
+          <nz-option *ngFor="let p of companySession" [nzValue]="p.id" [nzLabel]="p.name"></nz-option>
+        </nz-select>
+      </span>
+      <span class="label-required">修改:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="jobId" [nzLoading]="jobSession.length === 0" (ngModelChange)="inputJob($event)" (nzFocus)="getAllJob()">
+          <nz-option *ngFor="let p of jobSession" [nzValue]="p.id" [nzLabel]="p.name"></nz-option>
+        </nz-select>
+      </span>
+      <span class="label-required">删除（选中即删除）:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="delectJobId" [nzLoading]="jobSession.length === 0" (ngModelChange)="delectJob()" (nzFocus)="getAllJob()">
+          <nz-option *ngFor="let p of jobSession" [nzValue]="p.id" [nzLabel]="p.name"></nz-option>
+        </nz-select>
+      </span>
+      <span class="label-required">挂靠到:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="toCompanyId" [nzLoading]="companySession.length === 0" (ngModelChange)="doSendCompany()" (nzFocus)="getAllCompany()">
+          <nz-option *ngFor="let p of companySession" [nzValue]="p.id" [nzLabel]="p.name"></nz-option>
+        </nz-select>
+      </span>
+      <span class="label-required">从
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="deleteCompanyId" [nzLoading]="companySession.length === 0" (ngModelChange)="doDeleteJobTo()" (nzFocus)="getAllCompany()">
+          <nz-option *ngFor="let p of companySession" [nzValue]="p.id" [nzLabel]="p.name"></nz-option>
+        </nz-select>删除挂靠
+      </span>
+    </div>
+  </div>
+  <div class="input-row-content clearfix">
+    <div class="left-content">
+      <div class="content-title">文字信息</div>
+      <div class="content-input clearfix">
+        <div class="input-box">
+          <span class="input-label label-required">岗位名称：</span>
+          <input nz-input [(ngModel)]="jobName" class="input-item"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">所属行业：</span>
+          <input nz-input [(ngModel)]="jobBusiness" class="input-item" placeholder="例IT"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">简介:</span>
+          <input nz-input [(ngModel)]="jobIntro" class="input-item" placeholder="公司简介"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">学历要求:</span>
+          <input nz-input [(ngModel)]="jobEducation" class="input-item"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">薪资:</span>
+          <input nz-input [(ngModel)]="jobPay" placeholder="例8k/月" class="input-item"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">发布时间:</span>
+          <input nz-input [(ngModel)]="jobPubTime" placeholder="例2019-01-01" class="input-item"/>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="confirm-box">
+    <span class="input-label">&nbsp;</span>
+    <button nz-button nzType="primary" (click)="addJob()" [nzLoading]="loading">新建职位</button>
+  </div>
+</div>
+<div class="input-row clearfix">
+  <div class="input-row-header clearfix">
+    <div class="input-row-header-title">
+      新增实习
+    </div>
+    <div class="input-row-top-right">
+      <span class="label-required">修改:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="practiceId" [nzLoading]="practiceSession.length === 0" (ngModelChange)="inputPractice($event)" (nzFocus)="getAllPractice()">
+          <nz-option *ngFor="let p of practiceSession" [nzValue]="p.id" [nzLabel]="p.title+'('+p.companyName+')'"></nz-option>
+        </nz-select>
+      </span>
+      <span class="label-required">删除（选中即删除）:
+        <nz-select nzAllowClear nzPlaceHolder="请选择" [(ngModel)]="deletePracticeId" [nzLoading]="practiceSession.length === 0" (ngModelChange)="delectPractice()" (nzFocus)="getAllPractice()">
+          <nz-option *ngFor="let p of practiceSession" [nzValue]="p.id" [nzLabel]="p.title+'('+p.companyName+')'"></nz-option>
+        </nz-select>
+      </span>
+    </div>
+  </div>
+  <div class="input-row-content clearfix">
+    <div class="left-content">
+      <div class="content-title">文字信息</div>
+      <div class="content-input clearfix">
+        <div class="input-box">
+          <span class="input-label label-required">标题：</span>
+          <input nz-input [(ngModel)]="precticeTitle" class="input-item"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">公司名称：</span>
+          <input nz-input [(ngModel)]="precticeCompany" class="input-item"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">地址:</span>
+          <input nz-input [(ngModel)]="precticeAddress" class="input-item"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">学历要求:</span>
+          <input nz-input [(ngModel)]="precticeEducation" class="input-item"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">截止日期:</span>
+          <input nz-input [(ngModel)]="precticeTime" placeholder="例2019-01-01" class="input-item"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">薪酬:</span>
+          <input nz-input [(ngModel)]="precticePay" placeholder="例8k/月" class="input-item"/>
+        </div>
+        <div class="input-box">
+          <span class="input-label label-required">实习要求:</span>
+          <input nz-input [(ngModel)]="precticeInfo" placeholder="岗位要求" class="input-item"/>
+        </div>
+      </div>
+    </div>
+    <div class="right-content">
+      <div class="content-title">上传文件</div>
+      <div class="content-input clearfix">
+        <div class="input-box">
+          <span class="input-label label-required">图标上传:</span>
+          <nz-upload [(nzFileList)]="precticeFileList" (nzChange)="upLoadChangePracticeIco($event)">
+            <button nz-button><i nz-icon nzType="upload"></i><span>点击上传</span></button>
+          </nz-upload>
+        </div>
+        <div class="confirm-box">
+          <span class="input-label">&nbsp;</span>
+          <button nz-button nzType="primary" (click)="addPractice()" [nzLoading]="loading">新建实习</button>
         </div>
       </div>
     </div>
